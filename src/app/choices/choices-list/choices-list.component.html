@@ -1,0 +1,8 @@
+<section *ngIf = 'vote.voted'>You've have voted
+
+</section>
+
+<app-choice *ngFor="let game of games | async" [user]="user"
+            [game]="game" [vote]="vote" (outUpdatedVote)="updateVote($event)">
+
+</app-choice>

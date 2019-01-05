@@ -1,0 +1,8 @@
+<mat-card fxLayout="row" fxLayoutAlign="center">
+  <mat-card-header>
+    <mat-card-title>{{game.name}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-actions>
+    <button mat-raised-button type="submit" [disabled]="vote.voted" (click)="userVoted(!vote.voted)">Vote</button>
+  </mat-card-actions>
+</mat-card>
