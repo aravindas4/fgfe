@@ -1,9 +1,10 @@
-<app-choices-list [games]=games fxLayout="column" fxLayoutGap="2%"
-                  [user]="user"
+
+
+<app-choices-list [games]="games" fxLayout="column" fxLayoutGap="5%" fxLayoutAlign="center center"
                   [vote]="vote"
                   (outUpdatedVote)="updateVote($event)">
-
-
 </app-choices-list>
-<!-- <ng-template #votedBlock class="voted-block">You've have voted</ng-template> -->
+
 <!-- *ngIf="!vote; else votedBlock" -->
+<!-- [vote]="vote" -->
+<!-- [vote]="vote | async" -->

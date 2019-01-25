@@ -1,8 +1,20 @@
-<section *ngIf = 'vote.voted'>You've have voted
+<!-- {{temp.voted}}
+<section *ngIf="temp.voted" >
+  <mat-card fxLayout="column" fxLayoutAlign="center" fxLayoutGap='2em'*ngIf="vote.voted">
+    <mat-card-header  >
+      <mat-card-title>Voted {{vote.voted}}</mat-card-title>
+    </mat-card-header>
+  </mat-card>
+  </section> -->
 
-</section>
-
-<app-choice *ngFor="let game of games | async" [user]="user"
-            [game]="game" [vote]="vote" (outUpdatedVote)="updateVote($event)">
+  <!-- <ng-template #votedBlock> -->
+<mat-card class = "main-card" fxLayout="column" fxLayoutAlign="center" fxLayoutGap='2em'>
+  <mat-card-header class="header">
+    <mat-card-title>Poll for game of the day</mat-card-title>
+  </mat-card-header>
+<app-choice *ngFor="let game of games | async"
+            [game]="game"  (outUpdatedVote)="updateVote($event)">
 
 </app-choice>
+</mat-card>
+<!-- </ng-template> -->

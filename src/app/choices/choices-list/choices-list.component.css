@@ -1,0 +1,32 @@
+.text {
+  margin-bottom: 2em;
+  font-size: 2em;
+}
+
+.main-card {
+  width: 50%;
+}
+app-choice ::ng-deep :nth-child(even) mat-card.mat-card {
+  background-color: indigo;
+  color: white;
+}
+
+app-choice  ::ng-deep :nth-child(odd) mat-card.mat-card {
+  background-color: white;
+  color: indigo;
+}
+
+@media screen and (max-width: 750px) {
+  .main-card {
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 750px) and (max-width: 1100px){
+  .main-card {
+    width: 75%;
+  }
+}
+mat-card-title {
+  text-align: center;
+}

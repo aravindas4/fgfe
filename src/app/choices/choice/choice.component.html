@@ -1,8 +1,14 @@
-<mat-card fxLayout="row" fxLayoutAlign="center">
-  <mat-card-header>
+<mat-card fxLayout="column" fxLayoutAlign="center" fxLayoutGap='2em'>
+  <mat-card-header class="header" >
     <mat-card-title>{{game.name}}</mat-card-title>
   </mat-card-header>
-  <mat-card-actions>
-    <button mat-raised-button type="submit" [disabled]="vote.voted" (click)="userVoted(!vote.voted)">Vote</button>
+  <mat-card-content>
+    <p>
+      {{game.description}}
+    </p>
+  </mat-card-content>
+  <mat-card-actions class="submit" >
+    <button  mat-raised-button type="submit"  (click)="userVoted(game.id)"><mat-icon>thumb_up</mat-icon></button>
+<!-- [disabled]="vote.voted" -->
   </mat-card-actions>
 </mat-card>

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Game, Vote, User } from '../../model';
+import { Game, Vote, User, GameUpdate } from '../../model';
 
 @Component({
   selector: 'app-choice',
@@ -10,20 +10,19 @@ export class ChoiceComponent implements OnInit {
 
   @Input() game: Game;
   @Input() vote: Vote;
-  @Output() outUpdatedVote = new  EventEmitter<Vote>();
+  @Output() outUpdatedVote = new  EventEmitter<GameUpdate>();
   @Input() user: User;
 
   constructor() { }
 
   ngOnInit() {
+     // console.log(vote);
   }
 
-  userVoted(voted: boolean) {
-    console.log("choicen vote ");
-    console.log("choice "+voted);
+  userVoted(id: number) {
+    console.log({id});
     this.outUpdatedVote.emit({
-      ...this.vote,
-      voted
+      id
     });
   }
 }

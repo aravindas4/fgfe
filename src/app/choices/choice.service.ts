@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
+import { retry, catchError } from 'rxjs/operators';
 
-import { Game, Vote, User } from '../model';
-
+import { Game, Vote, User, GameUpdate } from '../model';
+import { ChoiceErrorHandlerService} from './choice-error-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,26 +12,33 @@ import { Game, Vote, User } from '../model';
 export class ChoiceService {
 
   private games = new BehaviorSubject<Game[]>([]);
-  private votes = new BehaviorSubject<Vote[]>([]);
+  private vote = new BehaviorSubject<Vote>(null);
 
   // private user = new BehaviorSubject<User>(User);
-  private users = new BehaviorSubject<User[]>([]);
+  private user = new BehaviorSubject<User>(null);
 
-  private gurl = `/api/games`;
-  private vurl = `/api/votes`;
-  private uurl = `/api/users`;
+  private gurl = `http://192.168.1.45:8000/fg/games/`;
+  private vurl = `http://192.168.1.45:8000/fg/votes/`;
+  private uurl = `http://192.168.1.45:8000/fg/usertoken/`;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private interceptorService: ChoiceErrorHandlerService) {
       this.loadGames();
   }
 
   private loadGames() {
-    this.http.get<Game[]>(this.gurl)
-        .subscribe((games) => this.games.next(games));
-    this.http.get<Vote[]>(this.vurl)
-        .subscribe((votes) => this.votes.next(votes));
-    this.http.get<User[]>(this.uurl)
-        .subscribe((users) => this.users.next(users));
+    // this.http.get<Vote>(this.vurl)
+    //     .subscribe((vote) => {
+    //       this.vote.next(vote)
+    //       console.log(vote);
+    //       // this.vote = vote;
+    //       console.log(this.vote);
+    //       if (!vote.voted) {
+    //         this.http.get<Game[]>(this.gurl).pipe(retry(2))
+    //             .subscribe((games) => this.games.next(games));
+    //       }
+    //     });
+    this.http.get<Game[]>(this.gurl).pipe(retry(2))
+               .subscribe((games) => this.games.next(games));
   }
 
 
@@ -38,9 +46,17 @@ export class ChoiceService {
     return this.games.asObservable();
   }
 
-  getUser(id: number) {
-      // this.http.get<User>(`/api/users/${id}`)
-      //   .subscribe((user) => this.user.next(user));
+  getUser(token: string) {
+
+      this.http.get<User>(this.uurl+token+'/')
+        .subscribe((user) => this.user.next(user));
+      console.log(this.user.asObservable());
+      return this.user.asObservable();
+
+  }
+
+  getVote() {
+    return this.vote.asObservable();
   }
 
   // getVote(id: number) {
@@ -51,17 +67,35 @@ export class ChoiceService {
   //     console.log(this.user);
   // }
 
-  getVotes() {
-    return this.votes.asObservable();
+  // getVotes() {
+  //   return this.vote.asObservable();
+  // }
+
+  updateVote(game: GameUpdate) {
+    console.log(game);
+    this.http.post(this.vurl, game)
+              .pipe(
+                catchError(this.handleError))
+                .subscribe(() => { window.alert("Successfully voted!");this.loadGames();});
+
   }
 
-  updateVote(vote: Vote) {
-    console.log("choice service "+`${vote.id}`);
-    this.http.post<Vote>(`/api/votes/${vote.id}`, vote)
-              .subscribe(() => this.loadGames());
-  }
+  handleError(error) {
+   let errorMessage = '';
+   if (error.error instanceof ErrorEvent) {
+     // client-side error
+     errorMessage = `Error: ${error.error.message}`;
+   } else {
+     // server-side error
+     if (error.status=== 409) {
+       errorMessage = `You've already voted.`;
+     } else {
+     errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+     }
+   }
+   window.alert(errorMessage);
+   // this.interceptorService.openDialog();
+   return throwError(errorMessage);
+ }
 
-  getUsers() {
-    return this.users.asObservable();
-  }
 }

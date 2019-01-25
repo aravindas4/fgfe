@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ChoiceContainerComponent } from './container/choice-container/choice-container.component';
 
 const routes: Routes = [{
-  path: 'users/:token', component: ChoiceContainerComponent
+  path: 'user/:token', component: ChoiceContainerComponent
 }];
 
 @NgModule({

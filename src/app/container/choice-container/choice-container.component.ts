@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ChoiceService } from '../../choices/choice.service';
-import { Game, Vote, User } from '../../model';
+import { Game, Vote, User, GameUpdate } from '../../model';
 import { Observable, combineLatest } from 'rxjs';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-choice-container',
@@ -15,19 +16,24 @@ export class ChoiceContainerComponent implements OnInit {
 
   games: Observable<Game[]>;
   vote: Observable<Vote>;
-  users: Observable<any>;
-  user: Observable<User>;
+  // users: Observable<any>;
+  user: User;
 
   constructor(private choiceService: ChoiceService,
-              private route: ActivatedRoute) {
-
+              private route: ActivatedRoute,
+              private authService: AuthService) {
   }
 
   ngOnInit() {
     this.games = this.choiceService.getGames();
-    this.users = this.choiceService.getUsers();
-    // console.log(this.games);
-    // console.log(this.route.params.value.token);
+    console.log(this.games);
+
+    // this.authService.clearToken();
+    this.route.params.subscribe((token_obj) => this.authService.setToken(token_obj.token));
+    this.vote = this.choiceService.getVote(); //.subscribe((vote) => {this.vote = vote; console.log(this.vote)});
+    console.log(this.vote);
+    // this.authService.setToken(this.route.params.value.token);
+    // console.log(this.authService.getToken());
     // console.log(this.users);
     // this.user = combineLatest(this.users,this.route.params)
     //             .pipe(
@@ -36,25 +42,17 @@ export class ChoiceContainerComponent implements OnInit {
     // .subscribe(([users, params]) => {
     //   return params }
     // );
-    this.user = combineLatest(this.users,this.route.params)
-                .pipe(
-                    map(([us, routeParams]) =>
-                    us.find((u) => u.token === routeParams.token))).subscribe();
 
-    console.log(this.user.id);
-    this.vote = combineLatest(
-                  this.choiceService.getVotes(),
-                  this.user
-                ).pipe(
-                  map(([votes, user]) =>
-                    votes.find((vote) => vote.user === user.id)
-                ));
+
+    // console.log(this.user);
+  //   this.vote = this.choiceService
+  //                 .getVote(this.user.id);
   // console.log(this.vote);
   }
 
-  updateVote(vote: Vote){
-    console.log("choice container "+vote);
-    this.choiceService.updateVote(vote);
+  updateVote(game: GameUpdate){
+    console.log(game);
+    this.choiceService.updateVote(game);
   }
 
 }

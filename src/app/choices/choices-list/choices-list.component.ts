@@ -1,7 +1,8 @@
 import { Component, OnInit, EventEmitter,
           ChangeDetectionStrategy, Input,
           Output } from '@angular/core';
-import { Game, Vote, User } from '../../model';
+import { Game, Vote, User, GameUpdate } from '../../model';
+import { ChoiceService } from '../../choices/choice.service';
 
 @Component({
   selector: 'app-choices-list',
@@ -13,15 +14,24 @@ export class ChoicesListComponent implements OnInit {
 
   @Input() games: Game[];
   @Input() vote: Vote;
-  @Output() outUpdatedVote = new  EventEmitter<Vote>();
+  @Output() outUpdatedVote = new  EventEmitter<GameUpdate>();
   @Input() user: User;
-  constructor() { }
+  // const votevalue: Vote;
+  temp: any = {voted: false};
+  constructor(private choiceService: ChoiceService) {
+      // console.log(this.user);
+   }
 
   ngOnInit() {
+    // this.vote.subscribe(
+    //   value => {
+    //     this.temp = value;
+    //   }
+    // )
   }
 
-  updateVote(vote: Vote) {
-    console.log("choice list "+vote);
-    this.outUpdatedVote.emit(vote);
+  updateVote(game: GameUpdate) {
+    console.log(game);
+    this.outUpdatedVote.emit(game);
   }
 }
